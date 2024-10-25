@@ -14,6 +14,11 @@ public class Calculator {
 
     private String latestOperation = "";
 
+    private int count = 0;
+
+    private boolean isNegative = false;
+
+
     /**
      * @return den aktuellen Bildschirminhalt als String
      */
@@ -29,9 +34,13 @@ public class Calculator {
      * @param digit Die Ziffer, deren Taste gedrückt wurde
      */
     public void pressDigitKey(int digit) {
+        count = count + 1;
+
         if(digit > 9 || digit < 0) throw new IllegalArgumentException();
 
         if(screen.equals("0") || latestValue == Double.parseDouble(screen)) screen = "";
+
+        if(isNegative) screen = "-";
 
         screen = screen + digit;
     }
@@ -45,6 +54,7 @@ public class Calculator {
      * im Ursprungszustand ist.
      */
     public void pressClearKey() {
+        count = 0;
         screen = "0";
         latestOperation = "";
         latestValue = 0.0;
@@ -105,6 +115,9 @@ public class Calculator {
      * entfernt und der Inhalt fortan als positiv interpretiert.
      */
     public void pressNegativeKey() {
+        count = count + 1;
+
+        if(count == 1)isNegative = true;
         screen = screen.startsWith("-") ? screen.substring(1) : "-" + screen;
     }
 
@@ -118,6 +131,7 @@ public class Calculator {
      * und das Ergebnis direkt angezeigt.
      */
     public void pressEqualsKey() {
+        count = 0;
         var result = switch(latestOperation) {
             case "+" -> latestValue + Double.parseDouble(screen);
             case "-" -> latestValue - Double.parseDouble(screen);
